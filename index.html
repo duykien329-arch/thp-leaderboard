@@ -84,14 +84,14 @@
             <button id="reset-btn" class="btn-outline">⚠️ RESET TRẢ ĐIỂM VỀ 0</button>
         </div>
 
-        <footer>&copy; THP CHAMPIONSHIP | SAFE INJECTION EDITION</footer>
+        <footer>&copy; THP CHAMPIONSHIP | FIXED CONNECT EDITION</footer>
     </div>
 
-    <!-- KHU VỰC CHẠY SCRIPT BẢO VỆ CHỐNG SỬA CHỮ TRÊN IPHONE -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getDatabase, ref, onValue, set } from "https://gstatic.com";
 
+        // ĐÃ CHỈNH SỬA SƠ ĐỒ ĐƯỜNG DẪN ĐÚNG THEO TÊN PROJECT THP-ESPORTS CỦA BẠN
         const firebaseConfig = { databaseURL: "https://firebaseio.com" };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
@@ -171,4 +171,3 @@
         document.getElementById('reset-btn').addEventListener('click', () => {
             if(confirm("Xác nhận reset điểm số về 0 (Giữ nguyên tên đội)?")) {
                 initialTeams.forEach(t => {
-                    t.rank_match = 12;
