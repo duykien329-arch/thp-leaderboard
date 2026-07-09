@@ -3,164 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THP ESPORTS - LEADERBOARD</title>
-    <!-- Thư viện giao diện Tailwind CSS và Font chữ Esport -->
+    <title>THP ESPORTS - BẢNG XẾP HẠNG</title>
     <script src="https://tailwindcss.com"></script>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background-color: #09090b; }
         .font-esport { font-family: 'Orbitron', sans-serif; }
-        .cyber-grid {
-            background-size: 30px 30px;
-            background-image: linear-gradient(to right, rgba(239, 68, 68, 0.04) 1px, transparent 1px),
-                              linear-gradient(to bottom, rgba(239, 68, 68, 0.04) 1px, transparent 1px);
-        }
     </style>
 </head>
-<body class="text-zinc-100 antialiased overflow-x-hidden min-h-screen flex flex-col justify-between">
+<body class="text-zinc-100 antialiased min-h-screen flex flex-col justify-between p-4">
 
-    <!-- KHU VỰC CHẠY ỨNG DỤNG -->
-    <div id="app" class="flex-1 flex flex-col justify-between"></div>
+    <!-- HEADER -->
+    <header class="w-full max-w-4xl mx-auto bg-zinc-950/90 border-b border-zinc-900 py-4 px-2 flex justify-between items-center">
+        <div class="font-esport font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
+            THP CHAMPIONSHIP
+        </div>
+        <span class="text-[10px] text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 rounded font-esport font-bold animate-pulse">
+            • LIVE
+        </span>
+    </header>
 
-    <script>
-        // Cấu hình điểm hạng chuẩn quốc tế (Top 1 = 12đ, Top 2 = 9đ, ...)
-        const REWARD_POINTS = { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 };
+    <!-- GIAO DIỆN BẢNG XẾP HẠNG CHÍNH -->
+    <main class="flex-1 w-full max-w-4xl mx-auto py-6 space-y-6">
+        
+        <div class="bg-zinc-900/40 border border-zinc-900 rounded-xl p-4">
+            <h2 class="text-xs font-bold text-zinc-400 font-esport uppercase tracking-wider mb-3">BẢNG XẾP HẠNG HIỆN TẠI</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-xs min-w-[400px]">
+                    <thead class="bg-zinc-950 text-zinc-500 font-esport uppercase text-[9px] tracking-wider border-b border-zinc-900">
+                        <tr>
+                            <th class="py-2.5 px-3 text-center w-12">Hạng</th>
+                            <th class="py-2.5 px-3">Đội tuyển</th>
+                            <th class="py-2.5 px-3 text-center w-16">Trận</th>
+                            <th class="py-2.5 px-3 text-center w-16">Kills</th>
+                            <th class="py-2.5 px-3 text-right w-20 pr-4">Tổng Điểm</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-zinc-300 divide-y divide-zinc-900/40">
+                        <tr class="bg-zinc-900/10">
+                            <td class="py-3 px-3 text-center font-black text-amber-400 text-sm">#1</td>
+                            <td class="py-3 px-3 font-semibold text-white">🇻🇳 HEAVY TEAM</td>
+                            <td class="py-3 px-3 text-center">1</td>
+                            <td class="py-3 px-3 text-center text-red-400">24</td>
+                            <td class="py-3 px-3 text-right font-black text-emerald-400 text-sm pr-4">36</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-3 text-center font-black text-zinc-400">#2</td>
+                            <td class="py-3 px-3 font-semibold text-white">🇻🇳 TEAM FLASH</td>
+                            <td class="py-3 px-3 text-center">1</td>
+                            <td class="py-3 px-3 text-center text-red-400">16</td>
+                            <td class="py-3 px-3 text-right font-black text-emerald-400 text-sm pr-4">25</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 px-3 text-center font-black text-amber-700">#3</td>
+                            <td class="py-3 px-3 font-semibold text-white">🇻🇳 BOX GAMING</td>
+                            <td class="py-3 px-3 text-center">1</td>
+                            <td class="py-3 px-3 text-center text-red-400">12</td>
+                            <td class="py-3 px-3 text-right font-black text-emerald-400 text-sm pr-4">19</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-        // QUẢN LÝ TRẠNG THÁI (STATE) ỨNG DỤNG
-        let currentView = 'home'; 
-        let searchQuery = '';
-        let selectedAdminTeam = 't1';
-        let inputRank = '1';
-        let inputKills = '0';
+        <!-- BẢNG ĐIỀU KHIỂN CỦA QUẢN TRỊ VIÊN -->
+        <div class="bg-zinc-900/30 border border-zinc-900/60 p-4 rounded-xl max-w-sm mx-auto">
+            <h3 class="text-xs font-bold font-esport text-zinc-400 uppercase tracking-wider mb-4 text-center">CẬP NHẬT ĐIỂM SỐ NHANH</h3>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-zinc-500 mb-1">Chọn Đội Tuyển</label>
+                    <select class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none">
+                        <option>HEAVY TEAM</option>
+                        <option>TEAM FLASH</option>
+                        <option>BOX GAMING</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-zinc-500 mb-1">Hạng Trận</label>
+                        <input type="number" value="1" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none" />
+                    </div>
+                    <div>
+                        <label class="block text-zinc-500 mb-1">Số Kills</label>
+                        <input type="number" value="0" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none" />
+                    </div>
+                </div>
+                <button onClick="alert('Hệ thống đang chạy chế độ Offline tĩnh. Hãy tích hợp Firebase để lưu trữ!')" class="w-full py-2 bg-gradient-to-r from-red-600 to-orange-600 font-bold rounded-lg tracking-wider text-[11px] font-esport uppercase mt-2">
+                    LƯU DỮ LIỆU
+                </button>
+            </div>
+        </div>
+    </main>
 
-        // Dữ liệu danh sách đội tuyển mặc định ban đầu
-        let databaseTeams = [
-            { id: 't1', name: 'HEAVY TEAM', flag: '🇻🇳', kills: 24, rank: 1 },
-            { id: 't2', name: 'TEAM FLASH', flag: '🇻🇳', kills: 16, rank: 2 },
-            { id: 't3', name: 'BOX GAMING', flag: '🇻🇳', kills: 12, rank: 4 },
-            { id: 't4', name: 'V GAMING', flag: '🇻🇳', kills: 8, rank: 6 }
-        ];
+    <!-- FOOTER -->
+    <footer class="w-full text-center py-4 text-zinc-700 text-[9px] font-esport uppercase">
+        &copy; THP CHAMPIONSHIP | STATIC SAFE MODE
+    </footer>
 
-        // HÀM XỬ LÝ: Tính toán điểm số và sắp xếp thứ hạng
-        const processLeaderboardData = () => {
-            return databaseTeams
-                .map(team => {
-                    const placementPts = REWARD_POINTS[team.rank] || 0;
-                    const totalPts = placementPts + (team.kills || 0);
-                    return { ...team, placement_points: placementPts, total_points: totalPts };
-                })
-                .filter(team => team.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                .sort((a, b) => b.total_points - a.total_points || b.kills - a.kills);
-        };
-
-        // HÀM XỬ LÝ: Admin cập nhật điểm cho đội tuyển
-        window.submitAdminForm = (event) => {
-            event.preventDefault();
-            const targetIndex = databaseTeams.findIndex(t => t.id === selectedAdminTeam);
-            if (targetIndex !== -1) {
-                databaseTeams[targetIndex].rank = parseInt(inputRank);
-                databaseTeams[targetIndex].kills = parseInt(inputKills);
-                alert(`Cập nhật điểm thành công cho đội ${databaseTeams[targetIndex].name}!`);
-                renderApp();
-            }
-        };
-
-        // HÀM XỬ LÝ: Đặt lại toàn bộ giải đấu về trạng thái ban đầu
-        window.triggerResetMatch = () => {
-            if (confirm("Hành động này sẽ reset điểm số của tất cả các đội về 0. Bạn có chắc chắn không?")) {
-                databaseTeams.forEach(team => {
-                    team.rank = 12;
-                    team.kills = 0;
-                });
-                renderApp();
-            }
-        };
-
-        // HÀM ĐIỀU HƯỚNG VIEW
-        window.navigateToView = (targetView) => {
-            currentView = targetView;
-            renderApp();
-        };
-
-        // HÀM LẮNG NGHE Ô TÌM KIẾM
-        window.updateSearchValue = (inputElement) => {
-            searchQuery = inputElement.value;
-            renderApp();
-        };
-
-        // HÀM CHÍNH: Vẽ giao diện ứng dụng lên màn hình
-        const renderApp = () => {
-            const sortedRecords = processLeaderboardData();
-
-            // Khung sườn giao diện chính có Header
-            let viewHtml = `
-                <div class="w-full flex flex-col flex-1">
-                    <!-- THANH ĐIỀU HƯỚNG HEADER -->
-                    <header class="w-full bg-zinc-950/80 backdrop-blur-md border-b border-zinc-900 sticky top-0 z-50 px-4 py-3.5">
-                        <div class="max-w-5xl w-full mx-auto flex items-center justify-between">
-                            <div class="font-esport font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-amber-500">
-                                THP CHAMPIONSHIP
-                            </div>
-                            <nav class="flex items-center gap-4 text-xs font-bold font-esport uppercase">
-                                <button onClick="navigateToView('home')" class="pb-1 transition-colors ${currentView === 'home' ? 'text-red-500 border-b-2 border-red-500' : 'text-zinc-400 hover:text-zinc-100'}">Trang Chủ</button>
-                                <button onClick="navigateToView('leaderboard')" class="pb-1 transition-colors ${currentView === 'leaderboard' ? 'text-red-500 border-b-2 border-red-500' : 'text-zinc-400 hover:text-zinc-100'}">Bảng Xếp Hạng</button>
-                                <button onClick="navigateToView('admin')" class="pb-1 transition-colors ${currentView === 'admin' ? 'text-red-500 border-b-2 border-red-500' : 'text-zinc-400 hover:text-zinc-100'}">Quản Trị</button>
-                            </nav>
-                        </div>
-                    </header>
-            `;
-
-            // MÀN HÌNH 1: TRANG CHỦ (HOME)
-            if (currentView === 'home') {
-                viewHtml += `
-                    <main class="flex-1 flex flex-col items-center justify-center px-4 relative py-16">
-                        <div class="absolute inset-0 cyber-grid pointer-events-none"></div>
-                        <div class="text-center z-10 max-w-sm w-full">
-                            <span class="px-2.5 py-1 rounded bg-red-600/10 text-red-500 border border-red-500/20 font-bold text-[9px] tracking-widest font-esport uppercase">
-                                Live Hub Tournament
-                            </span>
-                            <h1 class="text-3xl font-black font-esport tracking-tight mt-3 text-white uppercase">
-                                THP CHAMPIONSHIP
-                            </h1>
-                            <p class="mt-3 text-zinc-400 text-xs leading-relaxed">
-                                Hệ thống cập nhật kết quả và điểm số trận đấu theo thời gian thực dành cho giải đấu Free Fire chuyên nghiệp.
-                            </p>
-                            <div class="mt-8">
-                                <button onClick="navigateToView('leaderboard')" class="w-full sm:w-auto px-6 py-3 bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700 text-white font-bold rounded-lg shadow-lg shadow-red-600/20 transition-all uppercase tracking-wider text-xs font-esport">
-                                    🔥 Xem Bảng Xếp Hạng Live
-                                </button>
-                            </div>
-                        </div>
-                    </main>
-                `;
-            }
-
-            // MÀN HÌNH 2: BẢNG XẾP HẠNG (LEADERBOARD)
-            if (currentView === 'leaderboard') {
-                viewHtml += `
-                    <main class="flex-1 max-w-4xl w-full mx-auto px-4 py-6 z-20">
-                        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
-                            <div>
-                                <h2 class="text-lg font-black font-esport text-white tracking-wider uppercase">BẢNG XẾP HẠNG GIẢI ĐẤU</h2>
-                                <p class="text-[10px] text-emerald-400 font-bold animate-pulse uppercase tracking-widest mt-0.5">• LIVE UPDATE</p>
-                            </div>
-                            <div class="w-full sm:w-60">
-                                <input type="text" value="${searchQuery}" onInput="updateSearchValue(this)" placeholder="🔍 Tìm kiếm đội tuyển..." class="w-full px-3.5 py-2 bg-zinc-900 text-white placeholder-zinc-500 rounded-lg border border-zinc-800 focus:outline-none focus:border-red-500 text-xs transition-all" />
-                            </div>
-                        </div>
-
-                        <div class="bg-zinc-900/40 border border-zinc-900 rounded-xl overflow-x-auto">
-                            <table class="w-full text-left border-collapse text-xs min-w-[500px]">
-                                <thead class="bg-zinc-950 text-zinc-400 font-esport uppercase text-[9px] tracking-wider border-b border-zinc-900">
-                                    <tr>
-                                        <th class="py-3 px-4 text-center w-14">Hạng</th>
-                                        <th class="py-3 px-4">Đội tuyển</th>
-                                        <th class="py-3 px-4 text-center w-20">Thứ Hạng</th>
-                                        <th class="py-3 px-4 text-center w-20">Điểm Hạng</th>
-                                        <th class="py-3 px-4 text-center w-20">Điểm Kills</th>
-                                        <th class="py-3 px-4 text-right w-24 pr-5">Tổng Điểm</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="text-zinc-300 divide-y divide-zinc-900/40">
-                                    ${sortedRecords.map((team, index) => `
-                                        <tr class="hover:bg-zinc-900/20 transition-colors">
+</body>
+</html>
