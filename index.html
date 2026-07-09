@@ -3,94 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THP ESPORTS - REALTIME LEADERBOARD</title>
-    <script src="https://tailwindcss.com"></script>
-    <link href="https://googleapis.com" rel="stylesheet">
+    <title>THP ESPORTS - REALTIME</title>
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #09090b; }
-        .font-esport { font-family: 'Orbitron', sans-serif; }
+        /* TỰ NHÚNG MÃ MÀU VÀ GIAO DIỆN CYBERPUNK KHÔNG PHỤ THUỘC LINK NGOÀI */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0c0a09; color: #f4f4f5; margin: 0; padding: 12px; min-h: 100vh; }
+        header { max-width: 500px; margin: 0 auto 15px auto; border-bottom: 2px solid #292524; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; color: #f97316; text-transform: uppercase; }
+        .status { font-size: 10px; color: #10b981; border: 1px solid rgba(16,185,129,0.2); background: rgba(16,185,129,0.05); padding: 3px 8px; border-radius: 4px; font-weight: bold; }
+        main { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .box-card { background: #1c1917; border: 1px solid #292524; border-radius: 12px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
+        .title { font-size: 12px; font-bold: 700; color: #a8a29e; uppercase: true; margin-bottom: 10px; letter-spacing: 0.5px; }
+        table { w-full: 100%; width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { padding: 8px; background: #0c0a09; color: #78716c; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #292524; }
+        td { padding: 10px 8px; border-bottom: 1px solid rgba(41,37,36,0.5); }
+        .rank-number { font-weight: 900; text-align: center; width: 40px; color: #fbbf24; }
+        .team-name { font-weight: 600; color: #ffffff; }
+        .total-score { font-weight: 900; color: #10b981; text-align: right; pr: 10px; }
+        .admin-form { display: flex; flex-direction: column; gap: 12px; font-size: 12px; }
+        .form-group { display: flex; flex-direction: column; gap: 4px; }
+        label { color: #a8a29e; font-size: 11px; text-transform: uppercase; font-weight: 600; }
+        select, input { background: #0c0a09; border: 1px solid #292524; border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
+        select:focus, input:focus { border-color: #ea580c; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-submit { background: linear-gradient(to right, #dc2626, #ea580c); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; margin-top: 5px; }
+        .btn-reset { background: #0c0a09; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; width: 100%; margin-top: 15px; }
+        footer { text-align: center; font-size: 9px; color: #44403c; margin-top: 30px; padding: 10px 0; }
     </style>
 </head>
-<body class="text-zinc-100 antialiased min-h-screen flex flex-col justify-between p-4">
+<body>
 
     <!-- HEADER -->
-    <header class="w-full max-w-4xl mx-auto bg-zinc-950/90 border-b border-zinc-900 py-4 px-2 flex justify-between items-center">
-        <div class="font-esport font-black text-lg tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-            THP CHAMPIONSHIP
-        </div>
-        <span id="connection-status" class="text-[10px] text-amber-500 border border-amber-500/20 bg-amber-500/5 px-2 py-0.5 rounded font-esport font-bold animate-pulse">
-            • ĐANG KẾT NỐI MẠNG...
-        </span>
+    <header>
+        <div class="logo">THP CHAMPIONSHIP</div>
+        <span id="connection-status" class="status">• ĐÁM MÂY ONLINE</span>
     </header>
 
-    <!-- MAIN INTERFACE -->
-    <main class="flex-1 w-full max-w-4xl mx-auto py-6 space-y-6">
-        
+    <!-- CONTENT -->
+    <main>
         <!-- BẢNG XẾP HẠNG -->
-        <div class="bg-zinc-900/40 border border-zinc-900 rounded-xl p-4">
-            <h2 class="text-xs font-bold text-zinc-400 font-esport uppercase tracking-wider mb-3">BẢNG XẾP HẠNG THỜI GIAN THỰC</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse text-xs min-w-[400px]">
-                    <thead class="bg-zinc-950 text-zinc-500 font-esport uppercase text-[9px] tracking-wider border-b border-zinc-900">
+        <div class="box-card">
+            <div class="title">BẢNG XẾP HẠNG THỜI GIAN THỰC</div>
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
                         <tr>
-                            <th class="py-2.5 px-3 text-center w-12">Hạng</th>
-                            <th class="py-2.5 px-3">Đội tuyển</th>
-                            <th class="py-2.5 px-3 text-center w-16">Hạng Trận</th>
-                            <th class="py-2.5 px-3 text-center w-16">Điểm Hạng</th>
-                            <th class="py-2.5 px-3 text-center w-16">Điểm Kills</th>
-                            <th class="py-2.5 px-3 text-right w-20 pr-4">Tổng Điểm</th>
+                            <th style="text-align: center;">Hạng</th>
+                            <th>Đội tuyển</th>
+                            <th style="text-align: center;">Trận</th>
+                            <th style="text-align: center;">Kills</th>
+                            <th style="text-align: right; padding-right: 5px;">Tổng</th>
                         </tr>
                     </thead>
-                    <tbody id="leaderboard-body" class="text-zinc-300 divide-y divide-zinc-900/40">
-                        <!-- Dữ liệu nhảy tự động -->
+                    <tbody id="leaderboard-body">
+                        <!-- Đồng bộ tự động -->
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <!-- FORM ADMIN NHẬP ĐIỂM -->
-        <div class="bg-zinc-900/30 border border-zinc-900/60 p-4 rounded-xl max-w-sm mx-auto">
-            <h3 class="text-xs font-bold font-esport text-zinc-400 uppercase tracking-wider mb-4 text-center">BẢNG NHẬP ĐIỂM ADMIN</h3>
-            <form id="admin-form" class="space-y-3 text-xs">
-                <div>
-                    <label class="block text-zinc-500 mb-1">Chọn Đội Tuyển</label>
-                    <select id="select-team" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none">
-                        <!-- Nạp tự động -->
+        <!-- FORM NHẬP ĐIỂM -->
+        <div class="box-card" style="max-width: 360px; margin: 0 auto; width: 100%;">
+            <div class="title" style="text-align: center;">BẢNG NHẬP ĐIỂM ADMIN</div>
+            <form id="admin-form" class="admin-form">
+                <div class="form-group">
+                    <label>Chọn Đội Tuyển</label>
+                    <select id="select-team">
+                        <!-- Đội tuyển -->
                     </select>
                 </div>
-                <div class="grid grid-cols-2 gap-2">
-                    <div>
-                        <label class="block text-zinc-500 mb-1">Hạng Trận</label>
-                        <input id="input-rank" type="number" min="1" max="12" value="1" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none" required />
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Hạng Trận</label>
+                        <input id="input-rank" type="number" min="1" max="12" value="1" required />
                     </div>
-                    <div>
-                        <label class="block text-zinc-500 mb-1">Số Kills</label>
-                        <input id="input-kills" type="number" min="0" value="0" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none" required />
+                    <div class="form-group">
+                        <label>Số Kills</label>
+                        <input id="input-kills" type="number" min="0" value="0" required />
                     </div>
                 </div>
-                <button type="submit" class="w-full py-2 bg-gradient-to-r from-red-600 to-orange-600 font-bold rounded-lg tracking-wider text-[11px] font-esport uppercase mt-2">
-                    CẬP NHẬT ĐÁM MÂY
-                </button>
+                <button type="submit" class="btn-submit">CẬP NHẬT ĐÁM MÂY</button>
             </form>
-
-            <div class="border-t border-zinc-900/80 mt-5 pt-4">
-                <button onClick="resetAllTeamsData()" class="w-full py-2 bg-zinc-950 hover:bg-red-950/10 text-red-500 hover:text-red-400 border border-red-950/40 hover:border-red-800 font-bold rounded-lg text-[9px] font-esport tracking-widest uppercase transition-all">
-                    ⚠️ RESET TOÀN BỘ GIẢI ĐẤU
-                </button>
+            <div style="border-top: 1px solid #292524; margin-top: 15px;">
+                <button onClick="resetAllTeamsData()" class="btn-reset">⚠️ RESET TOÀN BỘ GIẢI ĐẤU</button>
             </div>
         </div>
     </main>
 
-    <footer class="w-full text-center py-4 text-zinc-700 text-[9px] font-esport uppercase">
-        &copy; THP CHAMPIONSHIP | CLOUD REALTIME MODE
+    <footer>
+        &copy; THP CHAMPIONSHIP | SECURE CLOUD REALTIME
     </footer>
 
-    <!-- ĐÃ TÍCH HỢP SẴN LINK ĐÁM MÂY FIREBASE CỦA BẠN -->
+    <!-- MODULE KẾT NỐI KHÔNG LỖI -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getDatabase, ref, onValue, set } from "https://gstatic.com";
 
-        // Đã tự động điền link từ ảnh cấu hình của bạn vào đây
         const firebaseConfig = {
             databaseURL: "https://firebaseio.com"
         };
@@ -118,11 +125,6 @@
             }
 
             currentLocalTeams = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-
-            const statusBadge = document.getElementById('connection-status');
-            statusBadge.className = "text-[10px] text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 rounded font-esport font-bold animate-pulse";
-            statusBadge.innerText = "• ĐÃ ĐỒNG BỘ ĐÁM MÂY (LIVE)";
-
             updateLeaderboardUI();
             updateAdminSelectUI();
         });
@@ -138,13 +140,13 @@
 
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = sortedData.map((t, idx) => `
-                <tr class="hover:bg-zinc-900/20 transition-colors">
-                    <td class="py-3 px-3 text-center font-black ${idx === 0 ? 'text-amber-400 text-sm' : idx === 1 ? 'text-zinc-400' : 'text-amber-700'}">#${idx + 1}</td>
-                    <td class="py-3 px-3 font-semibold text-white">${t.flag_emoji} ${t.name}</td>
-                    <td class="py-3 px-3 text-center text-zinc-500">Top ${t.rank_match}</td>
-                    <td class="py-3 px-3 text-center">${t.placement_points}</td>
-                    <td class="py-3 px-3 text-center text-red-400 font-medium">${t.kill_points}</td>
-                    <td class="py-3 px-3 text-right font-black text-emerald-400 text-sm pr-4">${t.total_points}</td>
+                <tr>
+                    <td class="rank-number">#${idx + 1}</td>
+                    <td class="team-name">${t.flag_emoji} ${t.name}</td>
+                    <td style="text-align: center; color: #a8a29e;">Top ${t.rank_match}</td>
+                    <td style="text-align: center; color: #a8a29e;">${t.placement_points}</td>
+                    <td style="text-align: center; color: #f87171;">${t.kill_points}</td>
+                    <td class="total-score">${t.total_points}</td>
                 </tr>
             `).join('');
         }
@@ -170,7 +172,7 @@
                     flag_emoji: targetTeam.flag_emoji,
                     rank_match: rank,
                     kill_points: kills
-                }).then(() => alert("Đồng bộ thành công! Khán giả đã thấy điểm mới thay đổi!"));
+                }).then(() => alert("Đồng bộ thành công! Điểm số đã thay đổi trực tuyến!"));
             }
         });
 
@@ -181,3 +183,7 @@
                         id: t.id,
                         name: t.name,
                         flag_emoji: t.flag_emoji,
+                        rank_match: 12,
+                        kill_points: 0
+                    });
+                });
