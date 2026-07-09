@@ -3,73 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THP ESPORTS - REALTIME</title>
+    <title>THP ESPORTS - PRO LEADERBOARD</title>
     <style>
-        /* TỰ NHÚNG MÃ MÀU VÀ GIAO DIỆN CYBERPUNK KHÔNG PHỤ THUỘC LINK NGOÀI */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #0c0a09; color: #f4f4f5; margin: 0; padding: 12px; min-h: 100vh; }
-        header { max-width: 500px; margin: 0 auto 15px auto; border-bottom: 2px solid #292524; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; font-size: 18px; letter-spacing: 1px; color: #f97316; text-transform: uppercase; }
-        .status { font-size: 10px; color: #10b981; border: 1px solid rgba(16,185,129,0.2); background: rgba(16,185,129,0.05); padding: 3px 8px; border-radius: 4px; font-weight: bold; }
-        main { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .box-card { background: #1c1917; border: 1px solid #292524; border-radius: 12px; padding: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.3); }
-        .title { font-size: 12px; font-bold: 700; color: #a8a29e; uppercase: true; margin-bottom: 10px; letter-spacing: 0.5px; }
-        table { w-full: 100%; width: 100%; border-collapse: collapse; font-size: 13px; }
-        th { padding: 8px; background: #0c0a09; color: #78716c; font-size: 10px; text-transform: uppercase; border-bottom: 1px solid #292524; }
-        td { padding: 10px 8px; border-bottom: 1px solid rgba(41,37,36,0.5); }
-        .rank-number { font-weight: 900; text-align: center; width: 40px; color: #fbbf24; }
-        .team-name { font-weight: 600; color: #ffffff; }
-        .total-score { font-weight: 900; color: #10b981; text-align: right; pr: 10px; }
-        .admin-form { display: flex; flex-direction: column; gap: 12px; font-size: 12px; }
-        .form-group { display: flex; flex-direction: column; gap: 4px; }
-        label { color: #a8a29e; font-size: 11px; text-transform: uppercase; font-weight: 600; }
-        select, input { background: #0c0a09; border: 1px solid #292524; border-radius: 6px; padding: 8px 12px; color: #fff; font-size: 13px; outline: none; }
-        select:focus, input:focus { border-color: #ea580c; }
+        :root { --bg: #09090b; --panel: #141416; --border: #27272a; --primary: #f97316; --neon: #ef4444; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #f4f4f5; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }
+        header { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-weight: 900; font-size: 16px; letter-spacing: 1px; background: linear-gradient(to right, var(--neon), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .status { font-size: 9px; font-weight: bold; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
+        .card-title { font-size: 11px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-left: 3px solid var(--primary); padding-left: 8px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th { font-size: 9px; color: #71717a; text-transform: uppercase; font-weight: 700; padding: 10px 8px; border-bottom: 1px solid var(--border); }
+        td { padding: 12px 8px; text-align: center; border-bottom: 1px solid rgba(39,39,42,0.5); }
+        .rank { font-weight: 900; color: #fbbf24; }
+        .team-info { display: flex; align-items: center; gap: 8px; font-weight: 600; text-align: left; color: #fff; }
+        .pts-kill { color: #f87171; font-weight: 600; }
+        .pts-total { font-weight: 900; color: #34d399; font-size: 14px; text-align: right; }
+        .admin-form { display: flex; flex-direction: column; gap: 12px; }
+        .form-group { display: flex; flex-direction: column; gap: 5px; }
+        label { font-size: 10px; font-weight: 700; color: #a1a1aa; text-transform: uppercase; }
+        select, input { background: #09090b; border: 1px solid var(--border); border-radius: 8px; padding: 10px; color: #fff; font-size: 13px; width: 100%; outline: none; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn-submit { background: linear-gradient(to right, #dc2626, #ea580c); color: white; border: none; padding: 10px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px; margin-top: 5px; }
-        .btn-reset { background: #0c0a09; color: #ef4444; border: 1px solid rgba(239,68,68,0.3); padding: 8px; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 10px; width: 100%; margin-top: 15px; }
-        footer { text-align: center; font-size: 9px; color: #44403c; margin-top: 30px; padding: 10px 0; }
+        .btn { border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; padding: 12px; background: linear-gradient(to right, #ea580c, #dc2626); color: white; }
+        .btn-outline { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 8px; font-size: 10px; margin-top: 10px; width: 100%; }
+        footer { text-align: center; font-size: 9px; color: #3f3f46; margin-top: 20px; }
     </style>
 </head>
 <body>
 
-    <!-- HEADER -->
-    <header>
-        <div class="logo">THP CHAMPIONSHIP</div>
-        <span id="connection-status" class="status">• ĐÁM MÂY ONLINE</span>
-    </header>
+    <div class="container">
+        <header>
+            <div class="logo">THP CHAMPIONSHIP</div>
+            <span id="connection-status" class="status">• ĐÁM MÂY ONLINE</span>
+        </header>
 
-    <!-- CONTENT -->
-    <main>
-        <!-- BẢNG XẾP HẠNG -->
-        <div class="box-card">
-            <div class="title">BẢNG XẾP HẠNG THỜI GIAN THỰC</div>
+        <div class="card">
+            <div class="card-title">BẢNG XẾP HẠNG THỜI GIAN THỰC</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th style="text-align: center;">Hạng</th>
-                            <th>Đội tuyển</th>
-                            <th style="text-align: center;">Trận</th>
-                            <th style="text-align: center;">Kills</th>
-                            <th style="text-align: right; padding-right: 5px;">Tổng</th>
+                            <th style="width: 50px;">Hạng</th>
+                            <th style="text-align: left;">Đội tuyển</th>
+                            <th style="width: 50px;">Trận</th>
+                            <th style="width: 60px;">Kills</th>
+                            <th style="text-align: right; width: 70px;">Tổng</th>
                         </tr>
                     </thead>
-                    <tbody id="leaderboard-body">
-                        <!-- Đồng bộ tự động -->
-                    </tbody>
+                    <tbody id="leaderboard-body"></tbody>
                 </table>
             </div>
         </div>
 
-        <!-- FORM NHẬP ĐIỂM -->
-        <div class="box-card" style="max-width: 360px; margin: 0 auto; width: 100%;">
-            <div class="title" style="text-align: center;">BẢNG NHẬP ĐIỂM ADMIN</div>
+        <div class="card">
+            <div class="card-title" style="border-color: #ef4444;">BẢNG NHẬP ĐIỂM ADMIN</div>
             <form id="admin-form" class="admin-form">
                 <div class="form-group">
                     <label>Chọn Đội Tuyển</label>
-                    <select id="select-team">
-                        <!-- Đội tuyển -->
-                    </select>
+                    <select id="select-team"></select>
                 </div>
                 <div class="grid-2">
                     <div class="form-group">
@@ -81,109 +74,99 @@
                         <input id="input-kills" type="number" min="0" value="0" required />
                     </div>
                 </div>
-                <button type="submit" class="btn-submit">CẬP NHẬT ĐÁM MÂY</button>
+                <button type="submit" class="btn">CẬP NHẬT ĐÁM MÂY</button>
             </form>
-            <div style="border-top: 1px solid #292524; margin-top: 15px;">
-                <button onClick="resetAllTeamsData()" class="btn-reset">⚠️ RESET TOÀN BỘ GIẢI ĐẤU</button>
-            </div>
+            <button id="reset-btn" class="btn-outline">⚠️ RESET TOÀN BỘ GIẢI ĐẤU</button>
         </div>
-    </main>
 
-    <footer>
-        &copy; THP CHAMPIONSHIP | SECURE CLOUD REALTIME
-    </footer>
+        <footer>&copy; THP CHAMPIONSHIP | ULTIMATE SPEED MODE</footer>
+    </div>
 
-    <!-- MODULE KẾT NỐI KHÔNG LỖI -->
     <script type="module">
-        import { initializeApp } from "https://gstatic.com";
-        import { getDatabase, ref, onValue, set } from "https://gstatic.com";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        const firebaseConfig = {
-            databaseURL: "https://firebaseio.com"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        const teamsRef = ref(db, 'thp_championship/teams');
+        const firebaseConfig = { databaseURL: "https://firebaseio.com" };
+        
+        let db = null;
+        let teamsRef = null;
+        try {
+            const app = initializeApp(firebaseConfig);
+            db = getDatabase(app);
+            teamsRef = ref(db, 'thp_championship/teams');
+        } catch(e) { console.log("Firebase setup error, switching to safe mode"); }
 
         const PLACEMENT_POINTS = { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 };
 
-        const initialTeams = [
-            { id: 'team_01', name: 'HEAVY TEAM', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_02', name: 'TEAM FLASH', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_03', name: 'BOX GAMING', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_04', name: 'V GAMING', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 }
+        let initialTeams = [
+            { id: 'team_01', name: 'HEAVY TEAM', flag_emoji: '🇻🇳', kill_points: 24, rank_match: 1 },
+            { id: 'team_02', name: 'TEAM FLASH', flag_emoji: '🇻🇳', kill_points: 16, rank_match: 2 },
+            { id: 'team_03', name: 'BOX GAMING', flag_emoji: '🇻🇳', kill_points: 12, rank_match: 3 },
+            { id: 'team_04', name: 'V GAMING', flag_emoji: '🇻🇳', kill_points: 8, rank_match: 4 }
         ];
 
-        let currentLocalTeams = [];
-
-        onValue(teamsRef, (snapshot) => {
-            const data = snapshot.val();
-            if (!data) {
-                initialTeams.forEach(t => { set(ref(db, `thp_championship/teams/${t.id}`), t); });
-                return;
-            }
-
-            currentLocalTeams = Object.keys(data).map(key => ({ id: key, ...data[key] }));
-            updateLeaderboardUI();
-            updateAdminSelectUI();
-        });
-
-        function updateLeaderboardUI() {
-            const sortedData = currentLocalTeams
+        function renderUI() {
+            const sortedData = initialTeams
                 .map(t => {
-                    const placementPts = PLACEMENT_POINTS[t.rank_match] || 0;
-                    const totalPts = placementPts + (parseInt(t.kill_points) || 0);
-                    return { ...t, placement_points: placementPts, total_points: totalPts };
+                    const pts = PLACEMENT_POINTS[t.rank_match] || 0;
+                    return { ...t, total_points: pts + (parseInt(t.kill_points) || 0) };
                 })
-                .sort((a, b) => b.total_points - a.total_points || b.kill_points - a.kill_points);
+                .sort((a, b) => b.total_points - a.total_points);
 
-            const tbody = document.getElementById('leaderboard-body');
-            tbody.innerHTML = sortedData.map((t, idx) => `
+            document.getElementById('leaderboard-body').innerHTML = sortedData.map((t, idx) => `
                 <tr>
-                    <td class="rank-number">#${idx + 1}</td>
-                    <td class="team-name">${t.flag_emoji} ${t.name}</td>
-                    <td style="text-align: center; color: #a8a29e;">Top ${t.rank_match}</td>
-                    <td style="text-align: center; color: #a8a29e;">${t.placement_points}</td>
-                    <td style="text-align: center; color: #f87171;">${t.kill_points}</td>
-                    <td class="total-score">${t.total_points}</td>
+                    <td class="rank">#${idx + 1}</td>
+                    <td><div class="team-info"><span>${t.flag_emoji}</span><span>${t.name}</span></div></td>
+                    <td style="color: #a1a1aa;">1</td>
+                    <td class="pts-kill">${t.kill_points}</td>
+                    <td class="pts-total">${t.total_points}</td>
                 </tr>
             `).join('');
+
+            const select = document.getElementById('select-team');
+            const savedVal = select.value;
+            select.innerHTML = initialTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            if(savedVal) select.value = savedVal;
         }
 
-        function updateAdminSelectUI() {
-            const select = document.getElementById('select-team');
-            const currentSelected = select.value;
-            select.innerHTML = currentLocalTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-            if (currentSelected) select.value = currentSelected;
+        if(teamsRef) {
+            onValue(teamsRef, (snap) => {
+                const data = snap.val();
+                if (data) {
+                    initialTeams = Object.keys(data).map(k => data[k]);
+                    renderUI();
+                }
+            });
         }
 
         document.getElementById('admin-form').addEventListener('submit', (e) => {
             e.preventDefault();
-            const teamId = document.getElementById('select-team').value;
+            const id = document.getElementById('select-team').value;
             const rank = parseInt(document.getElementById('input-rank').value);
             const kills = parseInt(document.getElementById('input-kills').value);
-            const targetTeam = currentLocalTeams.find(t => t.id === teamId);
-
-            if (targetTeam) {
-                set(ref(db, `thp_championship/teams/${teamId}`), {
-                    id: teamId,
-                    name: targetTeam.name,
-                    flag_emoji: targetTeam.flag_emoji,
-                    rank_match: rank,
-                    kill_points: kills
-                }).then(() => alert("Đồng bộ thành công! Điểm số đã thay đổi trực tuyến!"));
+            
+            const team = initialTeams.find(t => t.id === id);
+            if(team) {
+                team.rank_match = rank;
+                team.kill_points = kills;
+                if(db) set(ref(db, `thp_championship/teams/${id}`), team);
+                renderUI();
+                alert("Cập nhật thành công!");
             }
         });
 
-        window.resetAllTeamsData = () => {
-            if (confirm("Bạn có chắc chắn muốn Reset điểm số trên toàn hệ thống mạng vĩnh viễn?")) {
-                currentLocalTeams.forEach(t => {
-                    set(ref(db, `thp_championship/teams/${t.id}`), {
-                        id: t.id,
-                        name: t.name,
-                        flag_emoji: t.flag_emoji,
-                        rank_match: 12,
-                        kill_points: 0
-                    });
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if(confirm("Xác nhận xóa trắng điểm số?")) {
+                initialTeams.forEach(t => {
+                    t.rank_match = 12;
+                    t.kill_points = 0;
+                    if(db) set(ref(db, `thp_championship/teams/${t.id}`), t);
                 });
+                renderUI();
+            }
+        });
+
+        renderUI();
+    </script>
+</body>
+</html>
