@@ -7,10 +7,10 @@
     <style>
         :root { --bg: #09090b; --panel: #141416; --border: #27272a; --primary: #f97316; --neon: #ef4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: #f4f4f5; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: #f4f4f5; min-height: 100vh; padding: 15px; display: flex; flex-direction: column; align-items: center; }
         .container { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 15px; }
         header { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-weight: 900; font-size: 16px; letter-spacing: 1px; background: linear-gradient(to right, var(--neon), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo { font-weight: 900; font-size: 16px; letter-spacing: 1px; background: linear-gradient(to right, var(--neon), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; }
         .status { font-size: 9px; font-weight: bold; background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.3); color: #34d399; padding: 3px 8px; border-radius: 20px; text-transform: uppercase; }
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.5); }
         .card-title { font-size: 11px; font-weight: 800; color: #a1a1aa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; border-left: 3px solid var(--primary); padding-left: 8px; }
@@ -29,6 +29,7 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn { border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; padding: 12px; background: linear-gradient(to right, #ea580c, #dc2626); color: white; }
         .btn-outline { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 8px; font-size: 10px; margin-top: 10px; width: 100%; }
+        footer { text-align: center; font-size: 9px; color: #3f3f46; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -39,7 +40,6 @@
             <span id="connection-status" class="status">• ĐÁM MÂY ONLINE</span>
         </header>
 
-        <!-- BẢNG XẾP HẠNG THỜI GIAN THỰC -->
         <div class="card">
             <div class="card-title">BẢNG XẾP HẠNG THỜI GIAN THỰC (12 ĐỘI)</div>
             <div style="overflow-x: auto;">
@@ -58,21 +58,17 @@
             </div>
         </div>
 
-        <!-- BẢNG ĐIỀU KHIỂN THÔNG MINH TRÊN ĐIỆN THOẠI -->
         <div class="card">
             <div class="card-title" style="border-color: #ef4444;">BẢNG NHẬP ĐIỂM & ĐỔI TÊN ĐỘI</div>
             <form id="admin-form" class="admin-form">
                 <div class="form-group">
                     <label>Chọn Slot Đội Tuyển</label>
-                    <select id="select-team" onchange="onTeamSelectChange()"></select>
+                    <select id="select-team"></select>
                 </div>
-                
-                <!-- CHỨC NĂNG THẦN THÁNH: ĐỔI TÊN ĐỘI TRỰC TIẾP KHÔNG CẦN VÀO GITHUB -->
                 <div class="form-group">
                     <label style="color: #fbbf24;">✍️ Đổi/Sửa Tên Đội Tuyển</label>
                     <input id="input-name" type="text" placeholder="Nhập tên đội thực tế tại đây..." required />
                 </div>
-
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Hạng Trận (1-12)</label>
@@ -88,27 +84,21 @@
             <button id="reset-btn" class="btn-outline">⚠️ RESET TRẢ ĐIỂM VỀ 0</button>
         </div>
 
-        <footer>&copy; THP CHAMPIONSHIP | LIVE ADMIN CONTROL</footer>
+        <footer>&copy; THP CHAMPIONSHIP | SAFE INJECTION EDITION</footer>
     </div>
 
+    <!-- KHU VỰC CHẠY SCRIPT BẢO VỆ CHỐNG SỬA CHỮ TRÊN IPHONE -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getDatabase, ref, onValue, set } from "https://gstatic.com";
 
         const firebaseConfig = { databaseURL: "https://firebaseio.com" };
-        
-        let db = null;
-        let teamsRef = null;
-        try {
-            const app = initializeApp(firebaseConfig);
-            db = getDatabase(app);
-            teamsRef = ref(db, 'thp_championship/teams');
-        } catch(e) { console.log("Firebase Error"); }
-
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        const teamsRef = ref(db, 'thp_championship/teams');
         const PLACEMENT_POINTS = { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 };
-
         let initialTeams = [];
-        // Tạo sẵn 12 slot dữ liệu ban đầu
+
         for(let i=1; i<=12; i++) {
             let num = i < 10 ? '0' + i : i;
             initialTeams.push({ id: 'team_' + num, name: 'TEAM ' + num, flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 });
@@ -135,10 +125,10 @@
             const select = document.getElementById('select-team');
             const savedVal = select.value;
             select.innerHTML = initialTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
-            if(savedVal) { select.value = savedVal; } else { onTeamSelectChange(); }
+            if(savedVal) { select.value = savedVal; } else { updateInputs(); }
         }
 
-        window.onTeamSelectChange = () => {
+        function updateInputs() {
             const id = document.getElementById('select-team').value;
             const team = initialTeams.find(t => t.id === id);
             if(team) {
@@ -146,7 +136,9 @@
                 document.getElementById('input-rank').value = team.rank_match;
                 document.getElementById('input-kills').value = team.kill_points;
             }
-        };
+        }
+
+        document.getElementById('select-team').addEventListener('change', updateInputs);
 
         if(teamsRef) {
             onValue(teamsRef, (snap) => {
@@ -172,9 +164,11 @@
                 team.name = newName;
                 team.rank_match = rank;
                 team.kill_points = kills;
-                if(db) set(ref(db, `thp_championship/teams/${id}`), team);
-                renderUI();
-                alert("Đã lưu tên mới và cập nhật điểm số trực tuyến!");
+                set(ref(db, `thp_championship/teams/${id}`), team).then(() => alert("Đã lưu trực tuyến vĩnh viễn!"));
             }
         });
 
+        document.getElementById('reset-btn').addEventListener('click', () => {
+            if(confirm("Xác nhận reset điểm số về 0 (Giữ nguyên tên đội)?")) {
+                initialTeams.forEach(t => {
+                    t.rank_match = 12;
