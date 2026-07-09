@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>THP ESPORTS - AI REALTIME LEADERBOARD</title>
-    <!-- Nhúng thư viện AI đọc ảnh trực tiếp -->
-    <script src="https://jsdelivr.net"></script>
+    <title>THP ESPORTS - PRO REALTIME</title>
     <style>
         :root { --bg: #09090b; --panel: #141416; --border: #27272a; --primary: #f97316; --neon: #ef4444; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -31,13 +29,6 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .btn { border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 11px; padding: 12px; background: linear-gradient(to right, #ea580c, #dc2626); color: white; }
         .btn-outline { background: transparent; border: 1px solid rgba(239,68,68,0.3); color: #f87171; padding: 8px; font-size: 10px; margin-top: 10px; width: 100%; }
-        footer { text-align: center; font-size: 9px; color: #3f3f46; margin-top: 20px; }
-        
-        /* CSS Giao diện phần Quét ảnh AI */
-        .ai-scanner { border: 2px dashed rgba(249, 115, 22, 0.4); border-radius: 12px; padding: 15px; text-align: center; background: rgba(249, 115, 22, 0.02); margin-bottom: 15px; cursor: pointer; }
-        .ai-scanner input { display: none; }
-        .ai-loading { display: none; font-size: 11px; color: #fbbf24; font-weight: bold; animation: pulse 1.5s infinite; margin-top: 8px; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
     </style>
 </head>
 <body>
@@ -48,9 +39,9 @@
             <span id="connection-status" class="status">• ĐÁM MÂY ONLINE</span>
         </header>
 
-        <!-- BẢNG XẾP HẠNG 12 ĐỘI -->
+        <!-- BẢNG XẾP HẠNG THỜI GIAN THỰC -->
         <div class="card">
-            <div class="card-title">BẢNG XẾP HẠNG THỜI GIAN THỰC (12 TEAMS)</div>
+            <div class="card-title">BẢNG XẾP HẠNG THỜI GIAN THỰC (12 ĐỘI)</div>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
@@ -67,24 +58,21 @@
             </div>
         </div>
 
-        <!-- KHU VỰC CHỤP ẢNH ĐỌC TEXT AI CHUYÊN NGHIỆP -->
+        <!-- BẢNG ĐIỀU KHIỂN THÔNG MINH TRÊN ĐIỆN THOẠI -->
         <div class="card">
-            <div class="card-title" style="border-color: #a855f7;">🤖 AI SCANNER (CHỤP ẢNH KẾT QUẢ)</div>
-            <div class="ai-scanner" onclick="document.getElementById('ai-camera-file').click()">
-                <span style="font-size: 13px; font-weight: 600; color: #c084fc;">📸 Bấm để chụp ảnh hoặc tải ảnh bảng điểm</span>
-                <input type="file" id="ai-camera-file" accept="image/*" />
-                <div id="ai-status-text" class="ai-loading">🤖 AI ĐANG PHÂN TÍCH VÀ ĐỌC CHỮ...</div>
-            </div>
-        </div>
-
-        <!-- PANEL ĐIỀU KHIỂN NHẬP ĐIỂM BẰNG TAY -->
-        <div class="card">
-            <div class="card-title" style="border-color: #ef4444;">BẢNG NHẬP ĐIỂM ADMIN (CƠ ĐỘNG)</div>
+            <div class="card-title" style="border-color: #ef4444;">BẢNG NHẬP ĐIỂM & ĐỔI TÊN ĐỘI</div>
             <form id="admin-form" class="admin-form">
                 <div class="form-group">
-                    <label>Chọn Đội Tuyển</label>
-                    <select id="select-team"></select>
+                    <label>Chọn Slot Đội Tuyển</label>
+                    <select id="select-team" onchange="onTeamSelectChange()"></select>
                 </div>
+                
+                <!-- CHỨC NĂNG THẦN THÁNH: ĐỔI TÊN ĐỘI TRỰC TIẾP KHÔNG CẦN VÀO GITHUB -->
+                <div class="form-group">
+                    <label style="color: #fbbf24;">✍️ Đổi/Sửa Tên Đội Tuyển</label>
+                    <input id="input-name" type="text" placeholder="Nhập tên đội thực tế tại đây..." required />
+                </div>
+
                 <div class="grid-2">
                     <div class="form-group">
                         <label>Hạng Trận (1-12)</label>
@@ -95,12 +83,12 @@
                         <input id="input-kills" type="number" min="0" value="0" required />
                     </div>
                 </div>
-                <button type="submit" class="btn">CẬP NHẬT ĐÁM MÂY</button>
+                <button type="submit" class="btn">LƯU ĐIỂM & ĐỔI TÊN LÊN MẠNG</button>
             </form>
-            <button id="reset-btn" class="btn-outline">⚠️ RESET ĐỒNG BỘ 12 ĐỘI</button>
+            <button id="reset-btn" class="btn-outline">⚠️ RESET TRẢ ĐIỂM VỀ 0</button>
         </div>
 
-        <footer>&copy; THP CHAMPIONSHIP | AI OCR INTEGRATION</footer>
+        <footer>&copy; THP CHAMPIONSHIP | LIVE ADMIN CONTROL</footer>
     </div>
 
     <script type="module">
@@ -119,20 +107,12 @@
 
         const PLACEMENT_POINTS = { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 };
 
-        let initialTeams = [
-            { id: 'team_01', name: 'TEAM 01', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_02', name: 'TEAM 02', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_03', name: 'TEAM 03', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_04', name: 'TEAM 04', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_05', name: 'TEAM 05', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_06', name: 'TEAM 06', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_07', name: 'TEAM 07', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_08', name: 'TEAM 08', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_09', name: 'TEAM 09', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_10', name: 'TEAM 10', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_11', name: 'TEAM 11', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
-            { id: 'team_12', name: 'TEAM 12', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 }
-        ];
+        let initialTeams = [];
+        // Tạo sẵn 12 slot dữ liệu ban đầu
+        for(let i=1; i<=12; i++) {
+            let num = i < 10 ? '0' + i : i;
+            initialTeams.push({ id: 'team_' + num, name: 'TEAM ' + num, flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 });
+        }
 
         function renderUI() {
             const sortedData = initialTeams
@@ -154,3 +134,47 @@
 
             const select = document.getElementById('select-team');
             const savedVal = select.value;
+            select.innerHTML = initialTeams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+            if(savedVal) { select.value = savedVal; } else { onTeamSelectChange(); }
+        }
+
+        window.onTeamSelectChange = () => {
+            const id = document.getElementById('select-team').value;
+            const team = initialTeams.find(t => t.id === id);
+            if(team) {
+                document.getElementById('input-name').value = team.name;
+                document.getElementById('input-rank').value = team.rank_match;
+                document.getElementById('input-kills').value = team.kill_points;
+            }
+        };
+
+        if(teamsRef) {
+            onValue(teamsRef, (snap) => {
+                const data = snap.val();
+                if (data) {
+                    initialTeams = Object.keys(data).map(k => data[k]).sort((a,b) => a.id.localeCompare(b.id));
+                    renderUI();
+                } else {
+                    initialTeams.forEach(t => { set(ref(db, `thp_championship/teams/${t.id}`), t); });
+                }
+            });
+        }
+
+        document.getElementById('admin-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = document.getElementById('select-team').value;
+            const newName = document.getElementById('input-name').value;
+            const rank = parseInt(document.getElementById('input-rank').value);
+            const kills = parseInt(document.getElementById('input-kills').value);
+            
+            const team = initialTeams.find(t => t.id === id);
+            if(team) {
+                team.name = newName;
+                team.rank_match = rank;
+                team.kill_points = kills;
+                if(db) set(ref(db, `thp_championship/teams/${id}`), team);
+                renderUI();
+                alert("Đã lưu tên mới và cập nhật điểm số trực tuyến!");
+            }
+        });
+
