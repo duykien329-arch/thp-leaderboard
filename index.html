@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>THP ESPORTS - REALTIME LEADERBOARD</title>
-    <!-- Tailwind CSS & Google Fonts -->
     <script src="https://tailwindcss.com"></script>
     <link href="https://googleapis.com" rel="stylesheet">
     <style>
@@ -43,7 +42,7 @@
                         </tr>
                     </thead>
                     <tbody id="leaderboard-body" class="text-zinc-300 divide-y divide-zinc-900/40">
-                        <!-- Dữ liệu từ Firebase tự động vẽ vào đây -->
+                        <!-- Dữ liệu nhảy tự động -->
                     </tbody>
                 </table>
             </div>
@@ -56,7 +55,7 @@
                 <div>
                     <label class="block text-zinc-500 mb-1">Chọn Đội Tuyển</label>
                     <select id="select-team" class="w-full px-3 py-2 bg-zinc-950 border border-zinc-800 rounded-lg text-white focus:outline-none">
-                        <!-- Danh sách đội từ Firebase tự động nạp vào đây -->
+                        <!-- Nạp tự động -->
                     </select>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
@@ -82,30 +81,26 @@
         </div>
     </main>
 
-    <!-- FOOTER -->
     <footer class="w-full text-center py-4 text-zinc-700 text-[9px] font-esport uppercase">
         &copy; THP CHAMPIONSHIP | CLOUD REALTIME MODE
     </footer>
 
-    <!-- NHÚNG MODULE FIREBASE CHUẨN GOOGLE (DÒNG 105+) -->
+    <!-- ĐÃ TÍCH HỢP SẴN LINK ĐÁM MÂY FIREBASE CỦA BẠN -->
     <script type="module">
         import { initializeApp } from "https://gstatic.com";
         import { getDatabase, ref, onValue, set } from "https://gstatic.com";
 
-        // ⚠️ ĐÂY LÀ CHÌA KHÓA KẾT NỐI: Bạn cần thay bằng cấu hình Firebase của bạn
+        // Đã tự động điền link từ ảnh cấu hình của bạn vào đây
         const firebaseConfig = {
             databaseURL: "https://firebaseio.com"
         };
 
-        // Khởi tạo Firebase kết nối đám mây
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
-        const teamsRef = ref(db, 'tournaments/thp_championship/teams');
+        const teamsRef = ref(db, 'thp_championship/teams');
 
-        // Bảng quy đổi điểm thứ hạng Free Fire
         const PLACEMENT_POINTS = { 1: 12, 2: 9, 3: 8, 4: 7, 5: 6, 6: 5, 7: 4, 8: 3, 9: 2, 10: 1, 11: 0, 12: 0 };
 
-        // Mảng danh sách đội mặc định (Dùng để khởi tạo database nếu rỗng)
         const initialTeams = [
             { id: 'team_01', name: 'HEAVY TEAM', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
             { id: 'team_02', name: 'TEAM FLASH', flag_emoji: '🇻🇳', kill_points: 0, rank_match: 12 },
@@ -115,32 +110,23 @@
 
         let currentLocalTeams = [];
 
-        // HÀM LẮNG NGHE ĐỒNG BỘ DỮ LIỆU REALTIME TỪ TRÊN MẠNG XUỐNG
         onValue(teamsRef, (snapshot) => {
             const data = snapshot.val();
-            
-            // Nếu database trên mạng trống trơn, tự động đẩy danh sách đội mặc định lên
             if (!data) {
-                initialTeams.forEach(t => {
-                    set(ref(db, `tournaments/thp_championship/teams/${t.id}`), t);
-                });
+                initialTeams.forEach(t => { set(ref(db, `thp_championship/teams/${t.id}`), t); });
                 return;
             }
 
-            // Chuyển đổi dữ liệu Object từ mạng sang dạng Mảng để tính toán
             currentLocalTeams = Object.keys(data).map(key => ({ id: key, ...data[key] }));
 
-            // Cập nhật trạng thái đèn báo Live màu xanh lá cây
             const statusBadge = document.getElementById('connection-status');
             statusBadge.className = "text-[10px] text-emerald-400 border border-emerald-500/20 bg-emerald-500/5 px-2 py-0.5 rounded font-esport font-bold animate-pulse";
-            statusBadge.innerText = "• ĐÃ ĐỒNG BỘ ĐÁM MÂY";
+            statusBadge.innerText = "• ĐÃ ĐỒNG BỘ ĐÁM MÂY (LIVE)";
 
-            // Vẽ bảng điểm và sắp xếp thứ hạng tự động
             updateLeaderboardUI();
             updateAdminSelectUI();
         });
 
-        // HÀM XỬ LÝ: Tính điểm và render giao diện
         function updateLeaderboardUI() {
             const sortedData = currentLocalTeams
                 .map(t => {
@@ -163,7 +149,6 @@
             `).join('');
         }
 
-        // HÀM XỬ LÝ: Đồng bộ danh sách đội vào ô chọn của Admin
         function updateAdminSelectUI() {
             const select = document.getElementById('select-team');
             const currentSelected = select.value;
@@ -171,9 +156,28 @@
             if (currentSelected) select.value = currentSelected;
         }
 
-        // SỰ KIỆN: Admin nhấn nút cập nhật điểm lên mây Firebase
         document.getElementById('admin-form').addEventListener('submit', (e) => {
             e.preventDefault();
             const teamId = document.getElementById('select-team').value;
             const rank = parseInt(document.getElementById('input-rank').value);
             const kills = parseInt(document.getElementById('input-kills').value);
+            const targetTeam = currentLocalTeams.find(t => t.id === teamId);
+
+            if (targetTeam) {
+                set(ref(db, `thp_championship/teams/${teamId}`), {
+                    id: teamId,
+                    name: targetTeam.name,
+                    flag_emoji: targetTeam.flag_emoji,
+                    rank_match: rank,
+                    kill_points: kills
+                }).then(() => alert("Đồng bộ thành công! Khán giả đã thấy điểm mới thay đổi!"));
+            }
+        });
+
+        window.resetAllTeamsData = () => {
+            if (confirm("Bạn có chắc chắn muốn Reset điểm số trên toàn hệ thống mạng vĩnh viễn?")) {
+                currentLocalTeams.forEach(t => {
+                    set(ref(db, `thp_championship/teams/${t.id}`), {
+                        id: t.id,
+                        name: t.name,
+                        flag_emoji: t.flag_emoji,
